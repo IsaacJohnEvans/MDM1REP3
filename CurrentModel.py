@@ -11,19 +11,19 @@ def StateChanges():
     InfluencerToActive = 0.1
     ActiveToDormant = 0.1
 
-    DormantToActive = 0.005
+    DormantToActive = 0.1
     DormantToNonUsers = 0.1
 
     RecruitmentRateFromFriends = 1
-    RecruitmentRateFromInfluencers = 15
+    RecruitmentRateFromInfluencers = 10
 
-    POPULATION = 10**5
+    POPULATION = 10**9
     ActiveUsers = 0
     DormantUsers = 0
     Influencers = 100
     NonUsers = POPULATION - Influencers
 
-    Time = 120
+    Time = 600
 
     ActiveUsersValues = []
     DormantUsersValues = []
@@ -44,6 +44,7 @@ def StateChanges():
         NonUsers += DormantToNonUsers * DormantUsers - (RecruitmentRateFromFriends * ActiveUsers * NonUsers / POPULATION**2 + RecruitmentRateFromInfluencers * Influencers)
         if ActiveUsers <= 0 or DormantUsers <= 0 or Influencers <= 0 or NonUsers <= 0 :
             print("The model is out of range because a value is below zero.")
+            PrintStatistics(ActiveUsers, DormantUsers, Influencers, NonUsers, Week)
             PlotStatistics(ActiveUsersValues, DormantUsersValues, InfluencersValues, NonUsersValues, WeekValues)
             exit()
     PlotStatistics(ActiveUsersValues,DormantUsersValues,InfluencersValues,NonUsersValues,WeekValues)
