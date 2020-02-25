@@ -6,18 +6,8 @@ def StateChanges():
     This defines initial population conditions and coefficients for the movement of users.
     A for loop then calculates the change in each type of user and calls the function to print the number of each type of user.
     """
-    #These coefficients currently produce nonsense numbers.
-    ActiveToInfluencer = 0.001
-    InfluencerToActive = 0.1
-    ActiveToDormant = 0.1
 
-    DormantToActive = 0.1
-    DormantToNonUsers = 0.1
-
-    RecruitmentRateFromFriends = 1
-    RecruitmentRateFromInfluencers = 10
-
-    POPULATION = 10**9
+    POPULATION = 10**6
     ActiveUsers = 0
     DormantUsers = 0
     Influencers = 100
@@ -32,6 +22,18 @@ def StateChanges():
     WeekValues = []
 
     for Week in range(Time):
+        #These coefficients currently produce nonsense numbers.
+        ActiveToInfluencer = 0.001
+        InfluencerToActive = 0.1
+        ActiveToDormant = 0.1
+
+        DormantToActive = 0.1
+        DormantToNonUsers = 0.1
+
+        RecruitmentRateFromFriends = 1
+        RecruitmentRateFromInfluencers = 10
+
+        #Creating lists of values of Users
         ActiveUsersValues.append(ActiveUsers)
         DormantUsersValues.append(DormantUsers)
         InfluencersValues.append(Influencers)
