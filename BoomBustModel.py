@@ -8,5 +8,14 @@ DormantToNonUsers = 0.1
 
 RecruitmentRateFromFriends = 1
 RecruitmentRateFromInfluencers = 10
+
+POPULATION = 10**4
+ActiveUsers = 0
+DormantUsers = 0
+Influencers = 100
+NonUsers = POPULATION - Influencers
+Time = 150
+
 StateChanges(ActiveToDormant, ActiveToInfluencer, InfluencerToActive, DormantToActive,
-             DormantToNonUsers, RecruitmentRateFromFriends, RecruitmentRateFromInfluencers)
+             DormantToNonUsers, RecruitmentRateFromFriends, RecruitmentRateFromInfluencers,
+             ActiveUsers, DormantUsers, Influencers, NonUsers, POPULATION, Time)

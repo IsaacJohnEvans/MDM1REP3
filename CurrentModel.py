@@ -11,17 +11,12 @@ def ErrorChecker(ActiveUsers, DormantUsers, Influencers, NonUsers, POPULATION, W
         exit()
 
 def StateChanges(ActiveToDormant, ActiveToInfluencer, InfluencerToActive, DormantToActive,
-                 DormantToNonUsers, RecruitmentRateFromFriends, RecruitmentRateFromInfluencers):
+                 DormantToNonUsers, RecruitmentRateFromFriends, RecruitmentRateFromInfluencers,
+                 ActiveUsers, DormantUsers, Influencers, NonUsers, POPULATION, Time):
     """
     This defines initial population conditions and coefficients for the movement of users.
     A for loop then calculates the change in each type of user and calls the function to print the number of each type of user.
     """
-    POPULATION = 10**4
-    ActiveUsers = 0
-    DormantUsers = 0
-    Influencers = 100
-    NonUsers = POPULATION - Influencers
-    Time = 150
 
     ActiveUsersValues = []
     DormantUsersValues = []
