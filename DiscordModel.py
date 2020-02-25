@@ -7,14 +7,13 @@ def StateChanges():
     A for loop then calculates the change in each type of user and calls the function to print the number of each type of user.
     """
 
-    POPULATION = 10**4
+    POPULATION = 10**6
     ActiveUsers = 0
     DormantUsers = 0
     Influencers = 100
     NonUsers = POPULATION - Influencers
 
-    Time = 150
-
+    Time = 300
     ActiveUsersValues = []
     DormantUsersValues = []
     InfluencersValues = []
@@ -24,8 +23,8 @@ def StateChanges():
     for Week in range(Time):
         POPULATION = ActiveUsers + DormantUsers + Influencers + NonUsers
         #These coefficients currently produce nonsense numbers.
-        ActiveToInfluencer = 0.0001
-        InfluencerToActive = 0.1
+        ActiveToInfluencer = 0.1/Time
+        InfluencerToActive = 0.01
         ActiveToDormant = 0.1
 
         DormantToActive = 0.1
