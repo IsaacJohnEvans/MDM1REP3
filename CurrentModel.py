@@ -1,11 +1,17 @@
 import matplotlib.pyplot as plt
 
 def ErrorChecker(ActiveUsers, DormantUsers, Influencers, NonUsers, POPULATION, Week):
+    """
+    Checks to see if the total population is constant.
+    Checks to see if the number of each type of user is greater than zero.
+    If either of these conditions are not satisfied then the program is exited.
+    """
     if POPULATION != round(ActiveUsers + DormantUsers + Influencers + NonUsers):
         print(ActiveUsers + DormantUsers + Influencers + NonUsers)
         print(POPULATION)
+        print("The total population is not constant.")
         exit()
-    if (ActiveUsers <= 0 or DormantUsers <= 0 or Influencers <= 0 or NonUsers <= 0 ) and Week > 0:
+    if (ActiveUsers < 0 or DormantUsers < 0 or Influencers < 0 or NonUsers < 0):
         print("The model is out of range because a value is below zero.")
         PrintStatistics(ActiveUsers, DormantUsers, Influencers, NonUsers, Week)
         exit()
@@ -14,16 +20,19 @@ def StateChanges(ActiveToDormant, ActiveToInfluencer, InfluencerToActive, Dorman
                  DormantToNonUsers, RecruitmentRateFromFriends, RecruitmentRateFromInfluencers,
                  ActiveUsers, DormantUsers, Influencers, NonUsers, POPULATION, Time):
     """
-    This defines initial population conditions and coefficients for the movement of users.
-    A for loop then calculates the change in each type of user and calls the function to print the number of each type of user.
+    This function takes the initial arguments and then iteratively changes the number of each type of user.
+    The values of each type of user are printed and recorded onto a list at each time point.
     """
-
+    #Creating the empty lists
     ActiveUsersValues = []
     DormantUsersValues = []
     InfluencersValues = []
     NonUsersValues = []
     WeekValues = []
-
+    """
+    This for loop runs for an amount of time inputted in the initial conditions.
+    Each iteration changes the number of each type of user.
+    """
     for Week in range(Time):
         #Creating lists of values of Users
         ActiveUsersValues.append(ActiveUsers)
@@ -31,9 +40,9 @@ def StateChanges(ActiveToDormant, ActiveToInfluencer, InfluencerToActive, Dorman
         InfluencersValues.append(Influencers)
         NonUsersValues.append(NonUsers)
         WeekValues.append(Week)
-
+        #Printing this weeks statistics
         PrintStatistics(ActiveUsers, DormantUsers, Influencers, NonUsers, Week)
-
+        #Running the iteration
         ActiveUsers += ((RecruitmentRateFromFriends * ActiveUsersValues[Week] * NonUsersValues[Week] / POPULATION**2
                         + (RecruitmentRateFromInfluencers + InfluencerToActive) * InfluencersValues[Week]
                         + DormantToActive * DormantUsersValues[Week])
@@ -45,7 +54,9 @@ def StateChanges(ActiveToDormant, ActiveToInfluencer, InfluencerToActive, Dorman
         NonUsers += (DormantToNonUsers * DormantUsersValues[Week]
                     - (RecruitmentRateFromFriends * ActiveUsersValues[Week] * NonUsersValues[Week] / POPULATION**2)
                     - RecruitmentRateFromInfluencers * InfluencersValues[Week])
+        #Checking for errors
         ErrorChecker(ActiveUsers, DormantUsers, Influencers, NonUsers, POPULATION, Week)
+    #Plotting the data
     PlotStatistics(ActiveUsersValues, DormantUsersValues,InfluencersValues,NonUsersValues, WeekValues)
 
 def PrintStatistics(ActiveUsers, DormantUsers, Influencers, NonUsers, Week):
@@ -61,6 +72,11 @@ def PrintStatistics(ActiveUsers, DormantUsers, Influencers, NonUsers, Week):
     print()
 
 def PlotStatistics(ActiveUsersValues, DormantUsersValues,InfluencersValues,NonUsersValues, WeekValues):
+    """
+    A function that will plot the data collected using matplotlib.
+    Plots Active, Dormant and non users and influencers against the week number.
+    The plot is displayed.
+    """
     Figure = plt.figure()
     Figure.suptitle("Types of user")
     plt.plot(WeekValues, ActiveUsersValues, "r",
