@@ -1,18 +1,39 @@
 import matplotlib.pyplot as plt
 import numpy
 
-def StateChanges():
+def CreateCoefficients():
+    ActiveToInfluencer = 0.0001
+    InfluencerToActive = 0.1
+    ActiveToDormant = 0.1
+
+    DormantToActive = 0.1
+    DormantToNonUsers = 0.1
+
+    RecruitmentRateFromFriends = 1
+    RecruitmentRateFromInfluencers = 10
+    StateChanges(ActiveToDormant, ActiveToInfluencer, InfluencerToActive, DormantToActive,
+                 DormantToNonUsers, RecruitmentRateFromFriends, RecruitmentRateFromInfluencers)
+
+def ErrorChecker(ActiveUsers, DormantUsers, Influencers, NonUsers, POPULATION, Week):
+    if POPULATION != round(ActiveUsers + DormantUsers + Influencers + NonUsers):
+        print(ActiveUsers + DormantUsers + Influencers + NonUsers)
+        print(POPULATION)
+        exit()
+    if (ActiveUsers <= 0 or DormantUsers <= 0 or Influencers <= 0 or NonUsers <= 0 ) and Week > 0:
+        print("The model is out of range because a value is below zero.")
+        PrintStatistics(ActiveUsers, DormantUsers, Influencers, NonUsers, Week)
+        exit()
+def StateChanges(ActiveToDormant, ActiveToInfluencer, InfluencerToActive, DormantToActive,
+                 DormantToNonUsers, RecruitmentRateFromFriends, RecruitmentRateFromInfluencers):
     """
     This defines initial population conditions and coefficients for the movement of users.
     A for loop then calculates the change in each type of user and calls the function to print the number of each type of user.
     """
-
     POPULATION = 10**4
     ActiveUsers = 0
     DormantUsers = 0
     Influencers = 100
     NonUsers = POPULATION - Influencers
-
     Time = 150
 
     ActiveUsersValues = []
@@ -22,35 +43,28 @@ def StateChanges():
     WeekValues = []
 
     for Week in range(Time):
-        POPULATION = ActiveUsers + DormantUsers + Influencers + NonUsers
-        #These coefficients currently produce nonsense numbers.
-        ActiveToInfluencer = 0.0001
-        InfluencerToActive = 0.1
-        ActiveToDormant = 0.1
-
-        DormantToActive = 0.1
-        DormantToNonUsers = 0.1
-
-        RecruitmentRateFromFriends = 1
-        RecruitmentRateFromInfluencers = 10
-
         #Creating lists of values of Users
         ActiveUsersValues.append(ActiveUsers)
         DormantUsersValues.append(DormantUsers)
         InfluencersValues.append(Influencers)
         NonUsersValues.append(NonUsers)
         WeekValues.append(Week)
+
         PrintStatistics(ActiveUsers, DormantUsers, Influencers, NonUsers, Week)
-        ActiveUsers += RecruitmentRateFromFriends * ActiveUsers * NonUsers / POPULATION**2 + (RecruitmentRateFromInfluencers + InfluencerToActive) * Influencers + DormantToActive * DormantUsers - (ActiveToInfluencer + ActiveToDormant) * ActiveUsers
-        DormantUsers += ActiveToDormant * ActiveUsers - (DormantToNonUsers + DormantToActive) * DormantUsers
-        Influencers += ActiveToInfluencer * ActiveUsers - (InfluencerToActive * Influencers)
-        NonUsers += DormantToNonUsers * DormantUsers - (RecruitmentRateFromFriends * ActiveUsers * NonUsers / POPULATION**2 + RecruitmentRateFromInfluencers * Influencers)
-        if ActiveUsers <= 0 or DormantUsers <= 0 or Influencers <= 0 or NonUsers <= 0 :
-            print("The model is out of range because a value is below zero.")
-            PrintStatistics(ActiveUsers, DormantUsers, Influencers, NonUsers, Week)
-            PlotStatistics(ActiveUsersValues, DormantUsersValues, InfluencersValues, NonUsersValues, WeekValues)
-            exit()
-    PlotStatistics(ActiveUsersValues,DormantUsersValues,InfluencersValues,NonUsersValues,WeekValues)
+
+        ActiveUsers += ((RecruitmentRateFromFriends * ActiveUsersValues[Week] * NonUsersValues[Week] / POPULATION**2
+                        + (RecruitmentRateFromInfluencers + InfluencerToActive) * InfluencersValues[Week]
+                        + DormantToActive * DormantUsersValues[Week])
+                        - (ActiveToInfluencer + ActiveToDormant) * ActiveUsersValues[Week])
+        DormantUsers += (ActiveToDormant * ActiveUsersValues[Week]
+                     - (DormantToNonUsers + DormantToActive) * DormantUsersValues[Week])
+        Influencers += (ActiveToInfluencer * ActiveUsersValues[Week]
+                    - InfluencerToActive * InfluencersValues[Week])
+        NonUsers += (DormantToNonUsers * DormantUsersValues[Week]
+                    - (RecruitmentRateFromFriends * ActiveUsersValues[Week] * NonUsersValues[Week] / POPULATION**2)
+                    - RecruitmentRateFromInfluencers * InfluencersValues[Week])
+        ErrorChecker(ActiveUsers, DormantUsers, Influencers, NonUsers, POPULATION, Week)
+    PlotStatistics(ActiveUsersValues, DormantUsersValues,InfluencersValues,NonUsersValues, WeekValues)
 
 def PrintStatistics(ActiveUsers, DormantUsers, Influencers, NonUsers, Week):
     """
@@ -67,7 +81,10 @@ def PrintStatistics(ActiveUsers, DormantUsers, Influencers, NonUsers, Week):
 def PlotStatistics(ActiveUsersValues, DormantUsersValues,InfluencersValues,NonUsersValues, WeekValues):
     Figure = plt.figure()
     Figure.suptitle("Types of user")
-    plt.plot(WeekValues, ActiveUsersValues, "r", WeekValues, DormantUsersValues, "b", WeekValues, InfluencersValues, "g", WeekValues, NonUsersValues, "y")
+    plt.plot(WeekValues, ActiveUsersValues, "r",
+             WeekValues, DormantUsersValues, "b",
+             WeekValues, InfluencersValues, "g",
+             WeekValues, NonUsersValues, "y")
     plt.show()
 
-StateChanges()
+CreateCoefficients()
