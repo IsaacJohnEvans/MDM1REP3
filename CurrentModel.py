@@ -1,18 +1,4 @@
 import matplotlib.pyplot as plt
-import numpy
-
-def CreateCoefficients():
-    ActiveToInfluencer = 0.0001
-    InfluencerToActive = 0.1
-    ActiveToDormant = 0.1
-
-    DormantToActive = 0.1
-    DormantToNonUsers = 0.1
-
-    RecruitmentRateFromFriends = 1
-    RecruitmentRateFromInfluencers = 10
-    StateChanges(ActiveToDormant, ActiveToInfluencer, InfluencerToActive, DormantToActive,
-                 DormantToNonUsers, RecruitmentRateFromFriends, RecruitmentRateFromInfluencers)
 
 def ErrorChecker(ActiveUsers, DormantUsers, Influencers, NonUsers, POPULATION, Week):
     if POPULATION != round(ActiveUsers + DormantUsers + Influencers + NonUsers):
@@ -87,5 +73,3 @@ def PlotStatistics(ActiveUsersValues, DormantUsersValues,InfluencersValues,NonUs
              WeekValues, InfluencersValues, "g",
              WeekValues, NonUsersValues, "y")
     plt.show()
-
-CreateCoefficients()
