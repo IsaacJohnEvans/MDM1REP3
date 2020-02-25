@@ -23,6 +23,7 @@ def ErrorChecker(ActiveUsers, DormantUsers, Influencers, NonUsers, POPULATION, W
         print("The model is out of range because a value is below zero.")
         PrintStatistics(ActiveUsers, DormantUsers, Influencers, NonUsers, Week)
         exit()
+
 def StateChanges(ActiveToDormant, ActiveToInfluencer, InfluencerToActive, DormantToActive,
                  DormantToNonUsers, RecruitmentRateFromFriends, RecruitmentRateFromInfluencers):
     """
