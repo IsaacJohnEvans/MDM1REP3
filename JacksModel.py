@@ -9,6 +9,10 @@ USERNAME = 'mdm3socialnetwork'
 PASSWORD = 'Once Upon A Time I Made A Password For A Thing'
 DATABASENAME = 'SocialMediaPop' # DO NOT CHANGE THIS UNLESS YOU KNOW WHAT YOU ARE DOING. It will create a new database on my mysql server. (Don't worry it's not actually the end of the world. Just work.)
 
+SLIDERSENSITIVITYUP = 2
+SLIDERSENSITIVITYDOWN = 0.4
+STEPSENSITIVITY = 100
+
 # Tempory starting values so I know the globals are initalised.
 OpenActiveToInfluencer = 0.001
 OpenInfluencerToActive = 0.1
@@ -172,7 +176,7 @@ def PlotStatistics(ActiveUsersValues, DormantUsersValues,InfluencersValues,NonUs
 
 
 def update(val):
-    OpenActiveToInfluencer = SliderActiveToInfluencer.val
+    OpenActiveToInfluencer = SliderActiveToInfluencer.val/100
     OpenInfluencerToActive = SliderInfluencerToActive.val
     OpenActiveToDormant = SliderActiveToDormant.val
     OpenDormantToActive = SliderDormantToActive.val
@@ -238,15 +242,15 @@ axInfluencers = plt.axes([0.25, 0.5 + yoffset, 0.65, 0.03], facecolor=axcolor)
 
 
 
-SliderActiveToInfluencer            = Slider(axActiveToInfluencer, 'ActiveToInfluencer', int(OpenActiveToInfluencer/float(10)), OpenActiveToInfluencer*5, valinit=OpenActiveToInfluencer, valstep=(OpenActiveToInfluencer/float(10)))
-SliderInfluencerToActive            = Slider(axInfluencerToActive, 'InfluencerToActive', int(OpenInfluencerToActive/float(10)), OpenInfluencerToActive*5, valinit=OpenInfluencerToActive, valstep=(OpenInfluencerToActive/float(10)))
-SliderActiveToDormant               = Slider(axActiveToDormant, 'ActiveToDormant', int(OpenActiveToDormant/float(10)), OpenActiveToDormant*5, valinit=OpenActiveToDormant, valstep=(OpenActiveToDormant/float(10)))
-SliderDormantToActive               = Slider(axDormantToActive, 'DormantToActive', int(OpenDormantToActive/float(10)), OpenDormantToActive*5, valinit=OpenDormantToActive, valstep=(OpenDormantToActive/float(10)))
-SliderDormantToNonUsers             = Slider(axDormantToNonUsers, 'DormantToNonUsers', int(OpenDormantToNonUsers/float(10)), OpenDormantToNonUsers*5, valinit=OpenDormantToNonUsers, valstep=(OpenDormantToNonUsers/float(10)))
-SliderRecruitmentRateFromFriends    = Slider(axRecruitmentRateFromFriends, 'RecruitmentRateFromFriends', int(OpenRecruitmentRateFromFriends/float(10)), OpenRecruitmentRateFromFriends*5, valinit=OpenRecruitmentRateFromFriends, valstep=(OpenRecruitmentRateFromFriends/float(10)))
-SliderRecruitmentRateFromInfluencers= Slider(axRecruitmentRateFromInfluencers, 'RecruitmentRateFromInfluencers', int(OpenRecruitmentRateFromInfluencers/float(10)), OpenRecruitmentRateFromInfluencers*5, valinit=OpenRecruitmentRateFromInfluencers, valstep=(OpenRecruitmentRateFromInfluencers/float(10)))
-SliderPOPULATION                    = Slider(axPOPULATION, 'Population',int(OpenPOPULATION/float(10)), OpenPOPULATION*5, valinit=OpenPOPULATION, valstep=int(OpenPOPULATION/float(10)))
-SliderInfluencers                   = Slider(axInfluencers, 'Influencers',int(OpenInfluencers/float(10)), OpenInfluencers*5, valinit=OpenInfluencers, valstep=(OpenInfluencers/float(10)))
+SliderActiveToInfluencer            = Slider(axActiveToInfluencer, 'ActiveToInfluencer *10^2', int(OpenActiveToInfluencer*100*SLIDERSENSITIVITYDOWN), OpenActiveToInfluencer*100*SLIDERSENSITIVITYUP, valinit=OpenActiveToInfluencer*100, valstep=(OpenActiveToInfluencer*100/float(STEPSENSITIVITY)))
+SliderInfluencerToActive            = Slider(axInfluencerToActive, 'InfluencerToActive', int(OpenInfluencerToActive*SLIDERSENSITIVITYDOWN), OpenInfluencerToActive*SLIDERSENSITIVITYUP, valinit=OpenInfluencerToActive, valstep=(OpenInfluencerToActive/float(STEPSENSITIVITY)))
+SliderActiveToDormant               = Slider(axActiveToDormant, 'ActiveToDormant', int(OpenActiveToDormant*SLIDERSENSITIVITYDOWN), OpenActiveToDormant*SLIDERSENSITIVITYUP, valinit=OpenActiveToDormant, valstep=(OpenActiveToDormant/float(STEPSENSITIVITY)))
+SliderDormantToActive               = Slider(axDormantToActive, 'DormantToActive', int(OpenDormantToActive*SLIDERSENSITIVITYDOWN), OpenDormantToActive*SLIDERSENSITIVITYUP, valinit=OpenDormantToActive, valstep=(OpenDormantToActive/float(STEPSENSITIVITY)))
+SliderDormantToNonUsers             = Slider(axDormantToNonUsers, 'DormantToNonUsers', int(OpenDormantToNonUsers*SLIDERSENSITIVITYDOWN), OpenDormantToNonUsers*SLIDERSENSITIVITYUP, valinit=OpenDormantToNonUsers, valstep=(OpenDormantToNonUsers/float(STEPSENSITIVITY)))
+SliderRecruitmentRateFromFriends    = Slider(axRecruitmentRateFromFriends, 'RecruitmentRateFromFriends', int(OpenRecruitmentRateFromFriends*SLIDERSENSITIVITYDOWN), OpenRecruitmentRateFromFriends*SLIDERSENSITIVITYUP, valinit=OpenRecruitmentRateFromFriends, valstep=(OpenRecruitmentRateFromFriends/float(STEPSENSITIVITY)))
+SliderRecruitmentRateFromInfluencers= Slider(axRecruitmentRateFromInfluencers, 'RecruitmentRateFromInfluencers', int(OpenRecruitmentRateFromInfluencers*SLIDERSENSITIVITYDOWN), OpenRecruitmentRateFromInfluencers*SLIDERSENSITIVITYUP, valinit=OpenRecruitmentRateFromInfluencers, valstep=(OpenRecruitmentRateFromInfluencers/float(STEPSENSITIVITY)))
+SliderPOPULATION                    = Slider(axPOPULATION, 'Population',int(OpenPOPULATION*SLIDERSENSITIVITYDOWN), OpenPOPULATION*SLIDERSENSITIVITYUP, valinit=OpenPOPULATION, valstep=int(OpenPOPULATION/float(STEPSENSITIVITY)))
+SliderInfluencers                   = Slider(axInfluencers, 'Influencers',int(OpenInfluencers*SLIDERSENSITIVITYDOWN), OpenInfluencers*SLIDERSENSITIVITYUP, valinit=OpenInfluencers, valstep=int(OpenInfluencers/float(STEPSENSITIVITY)))
 
 SliderActiveToInfluencer.on_changed(update)
 SliderInfluencerToActive.on_changed(update)
