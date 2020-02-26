@@ -139,15 +139,27 @@ def StateChanges(ActiveToInfluencer = 0.001,InfluencerToActive = 0.1, ActiveToDo
         NonUsersValues.append(NonUsers)
         WeekValues.append(Week)
         PrintStatistics(ActiveUsers, DormantUsers, Influencers, NonUsers, Week)
-        ActiveUsers += RecruitmentRateFromFriends * ActiveUsers * NonUsers / POPULATION**2 + (RecruitmentRateFromInfluencers + InfluencerToActive) * Influencers + DormantToActive * DormantUsers - (ActiveToInfluencer + ActiveToDormant) * ActiveUsers
-        DormantUsers += ActiveToDormant * ActiveUsers - (DormantToNonUsers + DormantToActive) * DormantUsers
-        Influencers += ActiveToInfluencer * ActiveUsers - (InfluencerToActive * Influencers)
-        NonUsers += DormantToNonUsers * DormantUsers - (RecruitmentRateFromFriends * ActiveUsers * NonUsers / POPULATION**2 + RecruitmentRateFromInfluencers * Influencers)
-        if ActiveUsers <= 0 or DormantUsers <= 0 or Influencers <= 0 or NonUsers <= 0:
+        ActiveUsers += ((RecruitmentRateFromFriends * ActiveUsersValues[Week] * NonUsersValues[Week] / POPULATION**2
+                         + (RecruitmentRateFromInfluencers + InfluencerToActive) * InfluencersValues[Week]
+                         + DormantToActive * DormantUsersValues[Week])
+                        - (ActiveToInfluencer + ActiveToDormant) * ActiveUsersValues[Week])
+        DormantUsers += (ActiveToDormant * ActiveUsersValues[Week]
+                         - (DormantToNonUsers + DormantToActive) * DormantUsersValues[Week])
+        Influencers += (ActiveToInfluencer * ActiveUsersValues[Week]
+                        - InfluencerToActive * InfluencersValues[Week])
+        NonUsers += (DormantToNonUsers * DormantUsersValues[Week]
+                     - (RecruitmentRateFromFriends * ActiveUsersValues[Week] * NonUsersValues[Week] / POPULATION**2)
+                     - RecruitmentRateFromInfluencers * InfluencersValues[Week])
+        if ActiveUsers < 0 or DormantUsers < 0 or Influencers < 0 or NonUsers < 0:
             print("The model is out of range because a value is below zero.")
             PrintStatistics(ActiveUsers, DormantUsers, Influencers, NonUsers, Week)
             PlotStatistics(ActiveUsersValues, DormantUsersValues, InfluencersValues, NonUsersValues, WeekValues)
             break
+        if POPULATION != round(ActiveUsers + DormantUsers + Influencers + NonUsers):
+            print(ActiveUsers + DormantUsers + Influencers + NonUsers)
+            print(POPULATION)
+            print("The total population is not constant.")
+            exit()
     PlotStatistics(ActiveUsersValues,DormantUsersValues,InfluencersValues,NonUsersValues,WeekValues)
 
 
