@@ -139,16 +139,16 @@ def StateChanges(ActiveToInfluencer = 0.001,InfluencerToActive = 0.1, ActiveToDo
         NonUsersValues.append(NonUsers)
         WeekValues.append(Week)
         PrintStatistics(ActiveUsers, DormantUsers, Influencers, NonUsers, Week)
-        ActiveUsers += ((RecruitmentRateFromFriends * ActiveUsersValues[Week] * NonUsersValues[Week] / POPULATION**2
+        ActiveUsers += (RecruitmentRateFromFriends * ActiveUsersValues[Week]
                          + (RecruitmentRateFromInfluencers + InfluencerToActive) * InfluencersValues[Week]
-                         + DormantToActive * DormantUsersValues[Week])
+                         + DormantToActive * DormantUsersValues[Week]
                         - (ActiveToInfluencer + ActiveToDormant) * ActiveUsersValues[Week])
         DormantUsers += (ActiveToDormant * ActiveUsersValues[Week]
                          - (DormantToNonUsers + DormantToActive) * DormantUsersValues[Week])
         Influencers += (ActiveToInfluencer * ActiveUsersValues[Week]
                         - InfluencerToActive * InfluencersValues[Week])
         NonUsers += (DormantToNonUsers * DormantUsersValues[Week]
-                     - (RecruitmentRateFromFriends * ActiveUsersValues[Week] * NonUsersValues[Week] / POPULATION**2)
+                     - RecruitmentRateFromFriends * ActiveUsersValues[Week]
                      - RecruitmentRateFromInfluencers * InfluencersValues[Week])
         if ActiveUsers < 0 or DormantUsers < 0 or Influencers < 0 or NonUsers < 0:
             print("The model is out of range because a value is below zero.")
