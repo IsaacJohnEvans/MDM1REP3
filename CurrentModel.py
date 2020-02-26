@@ -79,8 +79,9 @@ def PlotStatistics(ActiveUsersValues, DormantUsersValues,InfluencersValues,NonUs
     """
     Figure = plt.figure()
     Figure.suptitle("Types of user")
-    plt.plot(WeekValues, ActiveUsersValues, "r",
-             WeekValues, DormantUsersValues, "b",
-             WeekValues, InfluencersValues, "g",
-             WeekValues, NonUsersValues, "y")
+    plt.plot(WeekValues, ActiveUsersValues, "r", label="Active Users")
+    plt.plot(WeekValues, DormantUsersValues, "b", label="Dormant Users")
+    plt.plot(WeekValues, InfluencersValues, "g", label="Influencers")
+    plt.plot(WeekValues, NonUsersValues, "y", label="Non-users")
+    plt.legend(loc="best")
     plt.show()
