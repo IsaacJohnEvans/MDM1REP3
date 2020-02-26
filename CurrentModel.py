@@ -1,6 +1,109 @@
 import matplotlib.pyplot as plt
+import mysql.connector # to install this though pycharm, open file->Settings->Project Inturpreter->'+'[logo on right]->install 'mysql-connector'.
 import numpy
 from matplotlib.widgets import Slider, Button, RadioButtons
+import time
+
+HOST = "ls-7747fafb702e9b0e95827d986e35040c609dd263.cztwonmsggwh.eu-west-2.rds.amazonaws.com"
+USERNAME = 'mdm3socialnetwork'
+PASSWORD = 'Once Upon A Time I Made A Password For A Thing'
+DATABASENAME = 'SocialMediaPop' # DO NOT CHANGE THIS UNLESS YOU KNOW WHAT YOU ARE DOING. It will create a new database on my mysql server. (Don't worry it's not actually the end of the world. Just work.)
+
+# Tempory starting values so I know the globals are initalised.
+OpenActiveToInfluencer = 0.001
+OpenInfluencerToActive = 0.1
+OpenActiveToDormant = 0.1
+OpenDormantToActive = 0.1
+OpenDormantToNonUsers = 0.1
+OpenRecruitmentRateFromFriends = 1
+OpenRecruitmentRateFromInfluencers = 10
+OpenPOPULATION = 10 ** 7
+OpenInfluencers = 100
+
+
+
+class DatabaseHandler:
+
+    def __init__(self):
+        try:
+            self.db = mysql.connector.connect(host=HOST, user=USERNAME, passwd=PASSWORD)
+            self.cursor2ex = self.db.cursor()
+            self.CreateDatabase()
+            #self.CreateSudoData()
+            # Test of my functions until I bother with button events
+
+        except ValueError as e:
+            print("Error while connecting to MySQL", e)
+            # Assumes error was caused by no Database existing called texchange
+
+    def CreateDatabase(self):
+        try:
+            self.db.connect(host=HOST, user=USERNAME, passwd=PASSWORD)
+        except ValueError as e:
+            print("Error while connecting to MySQL ", e)
+        self.cursor2ex = self.db.cursor()
+        self.cursor2ex.execute("CREATE DATABASE IF NOT EXISTS " + DATABASENAME)
+        self.db.close()
+        try:
+            self.db = mysql.connector.connect(host=HOST, user=USERNAME, passwd=PASSWORD, database=DATABASENAME)
+            self.cursor2ex = self.db.cursor()
+            self.CreateTablesIfNotExists()
+        except ValueError as e:
+            print("Error while connecting to MySQL after Database Creation ", e)
+
+    def CreateTablesIfNotExists(self):
+
+        """
+            For Ref:
+                ActiveToInfluencer
+                InfluencerToActive
+                ActiveToDormant
+                DormantToActive
+                DormantToNonUsers
+                RecruitmentRateFromFriends
+                RecruitmentRateFromInfluencers
+                POPULATION
+                Influencers
+        """
+        try:
+            self.cursor2ex.execute("""CREATE TABLE IF NOT EXISTS storedparameters (
+            paramID INT AUTO_INCREMENT PRIMARY KEY,  
+            ActiveToInfluencer Double NOT NULL,
+            InfluencerToActive Double NOT NULL,
+            ActiveToDormant Double NOT NULL,
+            DormantToActive Double NOT NULL,
+            DormantToNonUsers Double NOT NULL,
+            RecruitmentRateFromFriends Double NOT NULL,
+            RecruitmentRateFromInfluencers Double NOT NULL,
+            POPULATION Double NOT NULL,
+            Influencers Double NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)""")
+        except ValueError as e:
+            print("MySQL error after Table Creation ", e)
+
+    def SaveParameters(self, ActiveToInfluencer, InfluencerToActive, ActiveToDormant, DormantToActive, DormantToNonUsers, RecruitmentRateFromFriends, RecruitmentRateFromInfluencers, POPULATION, Influencers):
+        # returns success or not depending on whether username is taken and account successfully created.
+
+        # this function will add a New Set of parameters based on when program was last open.
+        try:
+            self.cursor2ex.execute("INSERT INTO storedparameters (ActiveToInfluencer, InfluencerToActive, ActiveToDormant, DormantToActive, DormantToNonUsers, RecruitmentRateFromFriends, RecruitmentRateFromInfluencers, POPULATION, Influencers) VALUES ('" + str(ActiveToInfluencer) + "', '" + str(InfluencerToActive) + "', '" + str(ActiveToDormant) + "', '" + str(DormantToActive) + "', '" + str(DormantToNonUsers) + "', '" + str(RecruitmentRateFromFriends) + "', '" + str(RecruitmentRateFromInfluencers) + "', '" + str(POPULATION) + "', '" + str(Influencers) + "');")
+            self.db.commit()
+        except():
+            return False
+        return True
+
+    def GetLatest(self):
+        try:
+            self.cursor2ex.execute("SELECT * FROM storedparameters ORDER BY paramID DESC LIMIT 1;")
+            result = self.cursor2ex.fetchall()
+        except ValueError as e:
+            print("MySQL error finding user for login", e)
+        #print(result)
+        if not len(result) == 0:
+            return result
+        else:
+            return False
+    # End of Database handler Class
 
 
 def StateChanges(ActiveToInfluencer = 0.001,InfluencerToActive = 0.1, ActiveToDormant = 0.1, DormantToActive = 0.1, DormantToNonUsers = 0.1, RecruitmentRateFromFriends = 1, RecruitmentRateFromInfluencers = 10, POPULATION = 10**9, ActiveUsers = 0, DormantUsers = 0, Influencers = 100 ):
@@ -43,6 +146,7 @@ def StateChanges(ActiveToInfluencer = 0.001,InfluencerToActive = 0.1, ActiveToDo
             break
     PlotStatistics(ActiveUsersValues,DormantUsersValues,InfluencersValues,NonUsersValues,WeekValues)
 
+
 def PrintStatistics(ActiveUsers, DormantUsers, Influencers, NonUsers, Week):
     """
     A function to print the number of each type of user.
@@ -54,6 +158,7 @@ def PrintStatistics(ActiveUsers, DormantUsers, Influencers, NonUsers, Week):
     print("NonUsers: ", NonUsers)
     print("MonthlyActiveUsers: ", ActiveUsers + Influencers)
     print()
+
 
 def PlotStatistics(ActiveUsersValues, DormantUsersValues,InfluencersValues,NonUsersValues, WeekValues):
     LineActiveUsers.set_data(WeekValues, ActiveUsersValues)
@@ -75,13 +180,37 @@ def update(val):
     OpenRecruitmentRateFromFriends = SliderRecruitmentRateFromFriends.val
     OpenRecruitmentRateFromInfluencers = SliderRecruitmentRateFromInfluencers.val
     OpenPOPULATION = SliderPOPULATION.val
-
     OpenInfluencers = SliderInfluencers.val
-
+    db.SaveParameters(OpenActiveToInfluencer, OpenInfluencerToActive, OpenActiveToDormant, OpenDormantToActive, OpenDormantToNonUsers, OpenRecruitmentRateFromFriends, OpenRecruitmentRateFromInfluencers, OpenPOPULATION, OpenInfluencers)
     StateChanges(OpenActiveToInfluencer, OpenInfluencerToActive, OpenActiveToDormant, OpenDormantToActive, OpenDormantToNonUsers, OpenRecruitmentRateFromFriends, OpenRecruitmentRateFromInfluencers, OpenPOPULATION, 0, 0, OpenInfluencers)
     #l.set_ydata(amp*np.sin(2*np.pi*freq*t))
     #fig.canvas.draw_idle()
 
+
+def getLatestParams(result):
+    global OpenActiveToInfluencer
+    global OpenInfluencerToActive
+    global OpenActiveToDormant
+    global OpenDormantToActive
+    global OpenDormantToNonUsers
+    global OpenRecruitmentRateFromFriends
+    global OpenRecruitmentRateFromInfluencers
+    global OpenPOPULATION
+    global OpenInfluencers
+    if len(result) > 0:
+        OpenActiveToInfluencer = result[0][1]
+        OpenInfluencerToActive = result[0][2]
+        OpenActiveToDormant = result[0][3]
+        OpenDormantToActive = result[0][4]
+        OpenDormantToNonUsers = result[0][5]
+        OpenRecruitmentRateFromFriends = result[0][6]
+        OpenRecruitmentRateFromInfluencers = result[0][7]
+        OpenPOPULATION = result[0][8]
+        OpenInfluencers = result[0][9]
+
+
+db = DatabaseHandler()
+getLatestParams(db.GetLatest())
 fig = plt.figure("MDM3 Social Network Pop Model")
 ax = fig.add_subplot(111)
 LineActiveUsers, = ax.plot([1,2,3,4],[0,2,4,6],"r", label="ActiveUsers")
@@ -107,16 +236,7 @@ axPOPULATION = plt.axes([0.25, 0.45 + yoffset, 0.65, 0.03], facecolor=axcolor)
 axInfluencers = plt.axes([0.25, 0.5 + yoffset, 0.65, 0.03], facecolor=axcolor)
 
 
-OpenActiveToInfluencer = 0.001
-OpenInfluencerToActive = 0.1
-OpenActiveToDormant = 0.1
-OpenDormantToActive = 0.1
-OpenDormantToNonUsers = 0.1
-OpenRecruitmentRateFromFriends = 1
-OpenRecruitmentRateFromInfluencers = 10
-OpenPOPULATION = 10 ** 7
 
-OpenInfluencers = 100
 
 SliderActiveToInfluencer            = Slider(axActiveToInfluencer, 'ActiveToInfluencer', int(OpenActiveToInfluencer/float(10)), OpenActiveToInfluencer*5, valinit=OpenActiveToInfluencer, valstep=(OpenActiveToInfluencer/float(10)))
 SliderInfluencerToActive            = Slider(axInfluencerToActive, 'InfluencerToActive', int(OpenInfluencerToActive/float(10)), OpenInfluencerToActive*5, valinit=OpenInfluencerToActive, valstep=(OpenInfluencerToActive/float(10)))
@@ -138,7 +258,10 @@ SliderRecruitmentRateFromInfluencers.on_changed(update)
 SliderPOPULATION.on_changed(update)
 
 SliderInfluencers.on_changed(update)
-
-plt.show()
+time.sleep(0.5)
 StateChanges()
+update(2)
+plt.show()
+
+
 
