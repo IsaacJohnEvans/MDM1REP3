@@ -9,15 +9,15 @@ ActiveUsers = 0
 DormantUsers = 0
 Influencers = 100
 NonUsers = POPULATION - Influencers
-Time = 150
+Time = 100000
 #The coefficients for the various state changes.
 ActiveToDormant = 0.1
-ActiveToInfluencer = 0.0001
-InfluencerToActive = 0.1
-DormantToActive = 0.1
-DormantToNonUsers = 0.1
+ActiveToInfluencer = 0.01
+InfluencerToActive = 0.01
+DormantToActive = 0.2
+DormantToNonUsers = 0
 RecruitmentRateFromFriends = 1
-RecruitmentRateFromInfluencers = 10
+RecruitmentRateFromInfluencers = 3
 #Calling the main function to run the model.
 StateChanges(ActiveToDormant, ActiveToInfluencer, InfluencerToActive, DormantToActive,
              DormantToNonUsers, RecruitmentRateFromFriends, RecruitmentRateFromInfluencers,
