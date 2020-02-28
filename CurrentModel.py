@@ -43,7 +43,7 @@ def StateChanges(ActiveToDormant, ActiveToInfluencer, InfluencerToActive, Dorman
         #Printing this weeks statistics
         PrintStatistics(ActiveUsers, DormantUsers, Influencers, NonUsers, Week)
         #Running the iteration
-        ActiveUsers += (RecruitmentRateFromFriends * ActiveUsersValues[Week]
+        ActiveUsers += (RecruitmentRateFromFriends * NonUsersValues[Week] / POPULATION ** 0.5
                         + (RecruitmentRateFromInfluencers+ InfluencerToActive) * InfluencersValues[Week]
                         + DormantToActive * DormantUsersValues[Week]
                         - (ActiveToInfluencer + ActiveToDormant) * ActiveUsersValues[Week])
@@ -52,7 +52,7 @@ def StateChanges(ActiveToDormant, ActiveToInfluencer, InfluencerToActive, Dorman
         Influencers += (ActiveToInfluencer * ActiveUsersValues[Week]
                     - InfluencerToActive * InfluencersValues[Week])
         NonUsers += (DormantToNonUsers * DormantUsersValues[Week]
-                    - RecruitmentRateFromFriends * ActiveUsersValues[Week]
+                    - RecruitmentRateFromFriends * NonUsersValues[Week] / POPULATION ** 0.5
                     - RecruitmentRateFromInfluencers * InfluencersValues[Week])
         #Checking for errors
         ErrorChecker(ActiveUsers, DormantUsers, Influencers, NonUsers, POPULATION, Week)
