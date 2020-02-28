@@ -9,7 +9,7 @@ ActiveUsers = 0
 DormantUsers = 0
 Influencers = 100
 NonUsers = POPULATION - Influencers
-Time = 520
+Time = 676
 #The coefficients for the various state changes.
 ActiveToDormant = 0.145
 ActiveToInfluencer = 0.0001
